@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Iris.NET
 {
@@ -12,7 +10,10 @@ namespace Iris.NET
     /// </summary>
     public static class NetworkExtensions
     {
-        private static volatile IFormatter _binaryFormatter = new BinaryFormatter();
+        private static readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        };
 
         /// <summary>
         /// Serializes an object into a memory stream.
@@ -31,13 +32,18 @@ namespace Iris.NET
         /// </summary>
         /// <param name="o">The object to serialize.</param>
         /// <param name="stream">The memory stream into which serialize the object.</param>
-        public static void SerializeToMemoryStream(this object o, MemoryStream stream) => _binaryFormatter.Serialize(stream, o);
+        public static void SerializeToMemoryStream(this object o, MemoryStream stream)
+        {
+            var json = JsonConvert.SerializeObject(o, _jsonSettings);
+            var bytes = Encoding.UTF8.GetBytes(json);
+            stream.Write(bytes, 0, bytes.Length);
+        }
 
         /// <summary>
         /// Deserializes a memory stream into an instance of type {T}.
         /// </summary>
         /// <typeparam name="T">The type of the deserialized object.</typeparam>
-        /// <param name="stream">The memory stram to deserialize.</param>
+        /// <param name="stream">The memory stream to deserialize.</param>
         /// <returns>The deserialized object as {T}.</returns>
         public static T DeserializeFromMemoryStream<T>(this MemoryStream stream) where T : class => DeserializeFromMemoryStream(stream) as T;
 
@@ -46,7 +52,11 @@ namespace Iris.NET
         /// </summary>
         /// <param name="stream">The memory stream to deserialize.</param>
         /// <returns>The deserialized object.</returns>
-        public static object DeserializeFromMemoryStream(this MemoryStream stream) => _binaryFormatter.Deserialize(stream);
+        public static object DeserializeFromMemoryStream(this MemoryStream stream)
+        {
+            var json = Encoding.UTF8.GetString(stream.ToArray());
+            return JsonConvert.DeserializeObject(json, _jsonSettings);
+        }
 
         /// <summary>
         /// Reads the next data coming from the stream.
