@@ -46,7 +46,7 @@ New features proposals and bug reports are displayed in the ***[Issues](https://
 ## Technology info
 This project was developed using *Visual Studio 2015* and *C# 6*.<br>
 
-**The library targets the .NET Framework 4.0.**
+**The library targets the .NET 8.0.**
 <br><br>
 ## License
 **Iris.NET** is distributed under the [MIT License](https://github.com/tommasobertoni/Iris.NET/blob/master/LICENCE).
