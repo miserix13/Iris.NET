@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -45,7 +45,7 @@ namespace Iris.NET.Client.ConsoleApplicationTest
         {
             channel = "perf";
 
-            await TaskEx.Delay(1000); // Delay for the server to spawn.
+            await Task.Delay(1000); // Delay for the server to spawn.
             
             IrisClientConfig config = new IrisClientConfig
             {
@@ -105,7 +105,7 @@ namespace Iris.NET.Client.ConsoleApplicationTest
                 publishTasks[i] = task;
             }
 
-            await TaskEx.WhenAll(publishTasks);
+            await Task.WhenAll(publishTasks);
 
             Console.WriteLine($"Sent {messagesCount} messages");
         }

@@ -1,4 +1,4 @@
-﻿using Iris.NET.Collections;
+using Iris.NET.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +18,9 @@ namespace Iris.NET
         #region Static
         static readonly IrisDisposableSubscription _disposedSubscription = new IrisDisposableSubscription();
 
-        static readonly Task<bool> _completedSucceededTask = TaskEx.FromResult(true);
+        static readonly Task<bool> _completedSucceededTask = Task.FromResult(true);
 
-        static readonly Task<bool> _completedFailedTask = TaskEx.FromResult(false);
+        static readonly Task<bool> _completedFailedTask = Task.FromResult(false);
         #endregion
 
         #region Properties
@@ -258,10 +258,10 @@ namespace Iris.NET
             
             if (_broadcastHandlers.Add(contentHandler))
             {
-                return TaskEx.FromResult<IDisposableSubscription>(new IrisDisposableSubscription(this, null, contentHandler));
+                return Task.FromResult<IDisposableSubscription>(new IrisDisposableSubscription(this, null, contentHandler));
             }
 
-            return TaskEx.FromResult<IDisposableSubscription>(_disposedSubscription);
+            return Task.FromResult<IDisposableSubscription>(_disposedSubscription);
         }
 
         /// <summary>

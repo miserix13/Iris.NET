@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -302,85 +301,31 @@ namespace Iris.NET.Network
 
         #region Events invocation
         #region OnInvalidDataReceived
-        private void InvokeAsyncOnInvalidDataReceived(object data) => OnInvalidDataReceived?.GetInvocationList().ForEach(e => ((InvalidDataHandler)e).BeginInvoke(data, EndAsyncEventForInvalidDataHandler, EventArgs.Empty));
-
-        private static void EndAsyncEventForInvalidDataHandler(IAsyncResult iar)
-        {
-            var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
-            var invokedMethod = (InvalidDataHandler)ar.AsyncDelegate;
-
-            try { invokedMethod.EndInvoke(iar); }
-            catch { }
-        }
+        private void InvokeAsyncOnInvalidDataReceived(object data) => OnInvalidDataReceived?.GetInvocationList().ForEach(e => Task.Run(() => { try { ((InvalidDataHandler)e)(data); } catch { } }));
         #endregion
 
         #region OnException
-        private void InvokeAsyncOnException(Exception ex) => OnException?.GetInvocationList().ForEach(e => ((ExceptionHandler)e).BeginInvoke(ex, EndAsyncEventForExceptionHandler, EventArgs.Empty));
-
-        private static void EndAsyncEventForExceptionHandler(IAsyncResult iar)
-        {
-            var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
-            var invokedMethod = (ExceptionHandler)ar.AsyncDelegate;
-
-            try { invokedMethod.EndInvoke(iar); }
-            catch { }
-        }
+        private void InvokeAsyncOnException(Exception ex) => OnException?.GetInvocationList().ForEach(e => Task.Run(() => { try { ((ExceptionHandler)e)(ex); } catch { } }));
         #endregion
 
         #region OnErrorReceived
-        private void InvokeAsyncOnErrorReceived(IrisError error) => OnErrorReceived?.GetInvocationList().ForEach(e => ((ErrorHandler)e).BeginInvoke(error, EndAsyncEventForErrorHandler, EventArgs.Empty));
-
-        private static void EndAsyncEventForErrorHandler(IAsyncResult iar)
-        {
-            var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
-            var invokedMethod = (ErrorHandler)ar.AsyncDelegate;
-
-            try { invokedMethod.EndInvoke(iar); }
-            catch { }
-        }
+        private void InvokeAsyncOnErrorReceived(IrisError error) => OnErrorReceived?.GetInvocationList().ForEach(e => Task.Run(() => { try { ((ErrorHandler)e)(error); } catch { } }));
         #endregion
 
         #region OnClientSubmittedPacketReceived
-        private void InvokeAsyncOnClientSubmittedPacketReceived(IrisPacket packet) => OnClientSubmittedPacketReceived?.GetInvocationList().ForEach(e => ((MessageHandler)e).BeginInvoke(packet, EndAsyncEventForMessageHandler, EventArgs.Empty));
-
-        private static void EndAsyncEventForMessageHandler(IAsyncResult iar)
-        {
-            var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
-            var invokedMethod = (MessageHandler)ar.AsyncDelegate;
-
-            try { invokedMethod.EndInvoke(iar); }
-            catch { }
-        }
+        private void InvokeAsyncOnClientSubmittedPacketReceived(IrisPacket packet) => OnClientSubmittedPacketReceived?.GetInvocationList().ForEach(e => Task.Run(() => { try { ((MessageHandler)e)(packet); } catch { } }));
         #endregion
 
         #region OnMetaReceived
-        private void InvokeAsyncOnMetaReceived(IrisMeta meta) => OnMetaReceived?.GetInvocationList().ForEach(e => ((MetaHandler)e).BeginInvoke(meta, EndAsyncEventForMetaHandler, EventArgs.Empty));
-
-        private static void EndAsyncEventForMetaHandler(IAsyncResult iar)
-        {
-            var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
-            var invokedMethod = (MetaHandler)ar.AsyncDelegate;
-
-            try { invokedMethod.EndInvoke(iar); }
-            catch { }
-        }
+        private void InvokeAsyncOnMetaReceived(IrisMeta meta) => OnMetaReceived?.GetInvocationList().ForEach(e => Task.Run(() => { try { ((MetaHandler)e)(meta); } catch { } }));
         #endregion
 
         #region OnNullReceived
-        private void InvokeAsyncOnNullReceived() => OnNullReceived?.GetInvocationList().ForEach(e => ((VoidHandler)e).BeginInvoke(EndAsyncEventForVoidHandler, EventArgs.Empty));
-
-        private static void EndAsyncEventForVoidHandler(IAsyncResult iar)
-        {
-            var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
-            var invokedMethod = (VoidHandler)ar.AsyncDelegate;
-
-            try { invokedMethod.EndInvoke(iar); }
-            catch { }
-        }
+        private void InvokeAsyncOnNullReceived() => OnNullReceived?.GetInvocationList().ForEach(e => Task.Run(() => { try { ((VoidHandler)e)(); } catch { } }));
         #endregion
 
         #region OnConnectionReset
-        private void InvokeAsyncOnConnectionReset() => OnConnectionReset?.GetInvocationList().ForEach(e => ((VoidHandler)e).BeginInvoke(EndAsyncEventForVoidHandler, EventArgs.Empty));
+        private void InvokeAsyncOnConnectionReset() => OnConnectionReset?.GetInvocationList().ForEach(e => Task.Run(() => { try { ((VoidHandler)e)(); } catch { } }));
         #endregion
         #endregion
 
